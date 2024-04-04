@@ -12,7 +12,6 @@ import pickle
 from xgboost import XGBClassifier
 
 # Training mports.
-import csv 
 import os
 import concurrent.futures
 
@@ -51,7 +50,7 @@ def get_video(file):
     scaler = StandardScaler() 
     drowsyhist = []
     drowsy = False
-    model = pickle.load(open('final.pkl', "rb"))     
+    model = pickle.load(open(r'Drowsiness-Detection/final.pkl', "rb"))     
 
     cap = cv2.VideoCapture(file) 
 
@@ -74,7 +73,7 @@ def get_video(file):
                 pupil = 0
                 eyebrow = 0
 
-                # Brighthen and Redo Contrast of Frame.
+                # Brighten and Redo Contrast of Frame.
                 cv2.normalize(frame, frame, 0, 255, cv2.NORM_MINMAX)
                 
                 # Process Frame.
@@ -97,25 +96,24 @@ def get_video(file):
                     eyebrow = EYES.eyebrow(face_landmarks.landmark)
                     MR = mouth_ratio(face_landmarks.landmark, h, w)
                     moer = moe(MR, EYES.ear)
-                
                 freq = EYES.blinking_freq(n_frames)
                 eye_closed = EYES.eye_closed_duration()
+
                 # Scale Features. 
-                if n_frames < 200: #200
-                    scaler.partial_fit([[MR, eye_closed, freq, perclo, eye_circ, pupil, eyebrow, moer, EYES.ear]])
+                if n_frames < 200: # Time to calibrate.
+                    # scaler.partial_fit([[MR, eye_closed, freq, perclo, eye_circ, pupil, eyebrow, moer, EYES.ear]])
+                    scaler.partial_fit([[eye_closed, perclo, pupil, moer]])
                 else:
-                    feat = scaler.transform([[MR, eye_closed, freq, perclo, eye_circ, pupil, eyebrow, moer, EYES.ear]]) #moe, ear
-                    with open(f'Data2\\Fold4\\{file[49:55]}_{file[-6:-4]}.csv', 'a', newline='') as fil:
-                        writer = csv.writer(fil)
-                        writer.writerow(x for x in feat[0])
-                    # drowsy = model.predict(feat)
-                    # drowsyhist.append(drowsy)
-                    # if len(drowsyhist) == 80:
-                    #     drowsyhist = []
-                # if drowsyhist.count(True) > 0.8*len(drowsyhist):  # Edit this value to get more responsive.
-                #     drowsy = 'Drowsy'
-                # else:
-                #     drowsy = 'Not'
+                    # feat = scaler.transform([[MR, eye_closed, freq, perclo, eye_circ, pupil, eyebrow, moer, EYES.ear]]) #moe, ear
+                    feat = scaler.transform([[eye_closed, perclo, pupil, moer]])
+                    drowsy = model.predict(feat)
+                    drowsyhist.append(drowsy)
+                    if len(drowsyhist) == 80:
+                        drowsyhist = []
+                if drowsyhist.count(True) > 0.8*len(drowsyhist):  # Edit this value to get more responsive.
+                    drowsy = 'Drowsy'
+                else:
+                    drowsy = 'Not'
                 fps = 1/(perf_counter()-start_fps)
                 
                 cv2.putText(frame, f"No.of Blinks: {EYES.blinks}", (410, 50), cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 0, 255), 2)
@@ -124,8 +122,8 @@ def get_video(file):
                 # cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
                 frame = cv2.resize(frame,(960,540))  # 960, 540 - 300, 300
                 
-                cv2.imshow(f'{file[49:55]}_{file[-6:-4]}', frame)
-
+                # cv2.imshow(f'{file[49:55]}_{file[-6:-4]}', frame)
+                cv2.imshow('hey', frame)
                 if cv2.waitKey(1) & 0xFF == 27:
                     break
 
@@ -143,6 +141,7 @@ def parallel(file):
 
 
 if __name__ == '__main__':
-    folder = r'D:\Final Year Project Dataset\RLDD Dataset\Fold4'
-    files = [os.path.join(folder, filename) for filename in os.listdir(folder)]
-    parallel(files)
+    # folder = r'D:\Final Year Project Dataset\RLDD Dataset\Fold4'
+    # files = [os.path.join(folder, filename) for filename in os.listdir(folder)]
+    # parallel(files)
+    get_video(0)
