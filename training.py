@@ -102,7 +102,6 @@ random_grid_li = {
 
 cross_val = StratifiedShuffleSplit(n_splits = 2, random_state = 42)
 for curr in model_list:
-    curr = LogisticRegression
     model = curr(n_jobs = -1)
     random_sea = RandomizedSearchCV(estimator = model, param_distributions = random_grid_li[curr], n_iter = 5, cv = cross_val, n_jobs = 6, verbose = 2)
     random_sea.fit(X_train, y_train)
