@@ -91,8 +91,6 @@ random_grid_li = {
                         'solver': ['liblinear', 'saga'],  
                         'max_iter': [100, 200, 300, 400]   
     }
-
-
 }
 
 # model = GaussianNB()

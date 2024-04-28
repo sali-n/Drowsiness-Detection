@@ -10,6 +10,8 @@ from Eyes import Eyes
 # Model Imports.
 import pickle
 from xgboost import XGBClassifier
+# import tensorflow as tf
+# from tensorflow import keras
 
 # Training mports.
 import os
@@ -50,7 +52,8 @@ def get_video(file):
     scaler = StandardScaler() 
     drowsyhist = []
     drowsy = False
-    model = pickle.load(open(r'Drowsiness-Detection/final.pkl', "rb"))     
+    model = pickle.load(open(r'Drowsiness-Detection/final.pkl', "rb"))  
+    # model = keras.models.load_model('lstm.keras')   
 
     cap = cv2.VideoCapture(file) 
 
@@ -106,6 +109,16 @@ def get_video(file):
                 else:
                     # feat = scaler.transform([[MR, eye_closed, freq, perclo, eye_circ, pupil, eyebrow, moer, EYES.ear]]) #moe, ear
                     feat = scaler.transform([[eye_closed, perclo, pupil, moer]])
+
+                    # tensorflow stuff:
+                    # feat_reshaped = tf.convert_to_tensor(feat, dtype=tf.float32)
+                    # feat_reshaped = tf.reshape(feat_reshaped, (1, 4, 1))
+                    # drowsy = model.predict(feat_reshaped)
+                    # drowsy = tf.greater(drowsy, .5)[0][0]
+                    # feat_reshaped = tf.reshape(tf.convert_to_tensor(feat, dtype=tf.float32), (1, 1, 4))
+                    # drowsy = tf.greater(model.predict(feat_reshaped), .5)[0][0]
+
+                    # Normal: 
                     drowsy = model.predict(feat)
                     drowsyhist.append(drowsy)
                     if len(drowsyhist) == 80:
