@@ -52,7 +52,7 @@ def get_video(file):
     scaler = StandardScaler() 
     drowsyhist = []
     drowsy = False
-    model = pickle.load(open(r'Drowsiness-Detection/final.pkl', "rb"))  
+    model = pickle.load(open(r'final.pkl', "rb"))  
     # model = keras.models.load_model('lstm.keras')   
 
     cap = cv2.VideoCapture(file) 
