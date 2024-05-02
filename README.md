@@ -23,6 +23,10 @@ This repository contains code and models for a drowsiness detection system. Belo
   - `hyperopt.py`: Hyperparameter tuning using Hyperopt.
   - `stepwise_xgboost.py`: Stepwise approach using XGBoost for hyperparameter tuning (GROUP 1: max_depth, min_child_weight, GROUP 2: subsample, colsample_bytree, GROUP 3: learning_rate, num_boost_round).
 
+## Dataset:
+
+The dataset used was the UTARLDD found here: https://www.kaggle.com/datasets/rishab260/uta-reallife-drowsiness-dataset
+
 ## Running the Code
 
 To run the code, execute `main_multi.py`. The first 200 frames (corresponds to ~ 5 - 10 seconds depending on the system) are used for calibrating. During this time, stare into the camera normally and blink a maximum of one time. 
